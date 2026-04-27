@@ -7,6 +7,9 @@ import random
 import sys
 import glob
 
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
 from tqdm import tqdm
 
 from spider_agent.envs.spider_agent import Spider_Agent_Env
@@ -67,6 +70,7 @@ def config() -> argparse.Namespace:
     parser.add_argument("--test_path","-t", type=str, default="./examples/spider2-snow.jsonl")
     parser.add_argument("--example_index", "-i", type=str, default="all", help="index range of the examples to run, e.g., '0-10', '2,3', 'all'")
     parser.add_argument("--example_name", "-n", type=str, default="", help="name of the example to run")
+    parser.add_argument("--ids_file", type=str, default="", help="path to a text file with one instance_id per line to run")
     parser.add_argument("--overwriting", action="store_true", default=False)
     parser.add_argument("--retry_failed", action="store_true", default=False)
 
@@ -128,7 +132,11 @@ def test(
         task_configs = [json.loads(line) for line in f]
 
         
-    if args.example_name != "":
+    if args.ids_file != "":
+        with open(args.ids_file, "r") as f:
+            allowed_ids = set(line.strip() for line in f if line.strip())
+        task_configs = [task for task in task_configs if task["instance_id"] in allowed_ids]
+    elif args.example_name != "":
         task_configs = [task for task in task_configs if args.example_name in task["id"]]
     else:
         if args.example_index != "all":

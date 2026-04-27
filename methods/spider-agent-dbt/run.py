@@ -7,6 +7,9 @@ import random
 import sys
 import glob
 
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
 from tqdm import tqdm
 
 from spider_agent.envs.spider_agent import Spider_Agent_Env
