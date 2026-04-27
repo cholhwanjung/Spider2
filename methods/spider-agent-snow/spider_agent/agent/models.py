@@ -23,7 +23,7 @@ logger = logging.getLogger("api-llms")
 def call_llm(payload):
     model = payload["model"]
     stop = ["Observation:","\n\n\n\n","\n \n \n"]
-    if model.startswith("gpt"):
+    if model.startswith("gpt") and not model.startswith("gpt-5"):
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}"
@@ -57,7 +57,7 @@ def call_llm(payload):
                 time.sleep(4 * (2 ** (i + 1)))
         return False, code_value
     
-    elif model.startswith("o1"):
+    elif model.startswith("o1") or model.startswith("gpt-5"):
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}"
@@ -99,6 +99,7 @@ def call_llm(payload):
                 return True, output_message
             except Exception as e:
                 logger.error("Failed to call LLM: " + str(e))
+                logger.error("Response: " + str(response))
                 logger.error("Retrying ...")
                 time.sleep(10 * (2 ** (i + 1)))
         return False, code_value
