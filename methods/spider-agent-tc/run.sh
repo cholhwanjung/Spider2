@@ -1,50 +1,51 @@
-export OPENAI_API_BASE=xxxxx
-export OPENAI_API_KEY=xxxxx
-
 INPUT_FILE="../../spider2-snow/spider2-snow.jsonl"
 SYSTEM_PROMPT="./prompts/spider_agent.txt"
-DATABASES_PATH="/path/to/Spider2/spider2-snow/resource/databases"  # MUST fill your own absolute path
+DATABASES_PATH="/Users/cholhwan/Documents/ai/Spider2/spider2-snow/resource/databases"
 DOCUMENTS_PATH="../../spider2-snow/resource/documents"
 
-MODEL="claude-3-7-sonnet-20250219"
-TEMPERATURE=0.7
-TOP_P=0.9
-MAX_NEW_TOKENS=12000
-MAX_ROUNDS=25
-NUM_THREADS=16
-ROLLOUT_NUMBER=1
-EXPERIMENT_SUFFIX="exp3" 
+# Instance filtering (leave empty to run all)
+IDS_FILE="../spider-agent-snow/completed_ids.txt"
 
-OUTPUT_FOLDER="./results/${MODEL}_temp${TEMPERATURE}_rounds${MAX_ROUNDS}_rollout${ROLLOUT_NUMBER}_${EXPERIMENT_SUFFIX}"
+MODEL="gpt-5-nano"
+# Temperature/top_p/max_new_tokens: leave unset to use model-specific defaults from main.py
+# TEMPERATURE=0.7
+# TOP_P=0.9
+# MAX_NEW_TOKENS=4096
+
+MAX_ROUNDS=20
+NUM_THREADS=4
+ROLLOUT_NUMBER=1
+EXPERIMENT_SUFFIX="test1"
+
+OUTPUT_FOLDER="./results/${MODEL}_${EXPERIMENT_SUFFIX}"
 
 mkdir -p "./results"
 
-echo "Output file will be: $OUTPUT_FOLDER"
+echo "Model: $MODEL"
+echo "Output folder: $OUTPUT_FOLDER"
+echo "IDS file: ${IDS_FILE:-all}"
 
-
-
-host=$(hostname -I | awk '{print $1}')
+host="localhost"
 port=$(shuf -i 30000-31000 -n 1)
-tool_server_url=http://$host:$port/get_observation
-python -m servers.serve --workers_per_tool 32 --host $host --port $port  &
+uv run python -m servers.serve --workers_per_tool 8 --host $host --port $port &
 server_pid=$!
 
-echo "Server (pid=$server_pid) started at $tool_server_url"
+echo "Server (pid=$server_pid) started at http://$host:$port"
 
 sleep 3
 
-python agent/main.py \
+uv run python agent/main.py \
     --input_file "$INPUT_FILE" \
     --output_folder "$OUTPUT_FOLDER" \
     --system_prompt_path "$SYSTEM_PROMPT" \
     --databases_path "$DATABASES_PATH" \
     --documents_path "$DOCUMENTS_PATH" \
     --model "$MODEL" \
-    --temperature "$TEMPERATURE" \
-    --top_p "$TOP_P" \
-    --max_new_tokens "$MAX_NEW_TOKENS" \
     --api_host "$host" \
     --api_port "$port" \
     --max_rounds "$MAX_ROUNDS" \
     --num_threads "$NUM_THREADS" \
-    --rollout_number "$ROLLOUT_NUMBER"
+    --rollout_number "$ROLLOUT_NUMBER" \
+    ${IDS_FILE:+--ids_file "$IDS_FILE"}
+
+kill $server_pid

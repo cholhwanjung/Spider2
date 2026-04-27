@@ -140,6 +140,12 @@ class LLMAgent:
         with open(self.args.input_file, 'r', encoding='utf-8') as f:
             items = [json.loads(line) for line in f]
 
+        if self.args.ids_file:
+            with open(self.args.ids_file, 'r', encoding='utf-8') as f:
+                allowed_ids = set(line.strip() for line in f if line.strip())
+            items = [item for item in items if item["instance_id"] in allowed_ids]
+            print(f"Filtered to {len(items)} items from ids_file: {self.args.ids_file}")
+
         random.shuffle(items)
         
         tasks_to_process = []
