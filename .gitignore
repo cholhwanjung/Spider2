@@ -28,6 +28,12 @@ methods/spider-agent-snow/examples/*
 !methods/spider-agent-snow/logs/README.md
 !methods/spider-agent-snow/output/README.md
 
+methods/spider-agent-tc/results/*
+
+spider2-snow/evaluation_suite/*.csv
+spider2-snow/evaluation_suite/log.txt
+spider2-snow/evaluation_suite/*/
+
 spider2-lite/evaluation_suite/*
 spider2-lite/fix_rows.py
 spider2-lite/query_local.py
@@ -65,6 +71,8 @@ spider2-lite/resource/databases/local/*.sqlite
 # Byte-compiled / optimized / DLL files
 **/__pycache__/
 **/launch.json
+
+.env
 
 *.DS_Store
 *.pyc
