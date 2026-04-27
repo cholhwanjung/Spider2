@@ -1,0 +1,78 @@
+[project]
+name = "spider2"
+version = "0.1.0"
+requires-python = "==3.11.*"
+dependencies = [
+    # agent core
+    "docker",
+    "gymnasium",
+    "openai==1.31.0",
+    "tenacity",
+    "rich",
+    "tqdm",
+    "rpyc",
+
+    # LLM / prompt
+    "langchain",
+    "tiktoken",
+    "transformers",
+    "flaml",
+    "dashscope",
+    "groq",
+
+    # databases
+    "google-cloud-bigquery",
+    "db-dtypes",
+    "pyarrow",
+    "duckdb",
+    "snowflake-connector-python",
+    "psycopg2-binary",
+    "mysql-connector-python",
+
+    # data / viz
+    "pandas",
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "matplotlib",
+    "seaborn",
+    "plotly",
+    "tabulate",
+    "openpyxl",
+
+    # dbt
+    "dbt-duckdb",
+
+    # retrieval / storage
+    "chromadb",
+    "diskcache",
+
+    # document parsing
+    "pypdf",
+    "unstructured",
+
+    # text matching
+    "fuzzywuzzy",
+    "python-levenshtein",
+
+    # web
+    "requests",
+    "playwright",
+    "minify-html",
+
+    # spider-agent-tc server
+    "fastapi",
+    "uvicorn",
+
+    # gemini
+    "google-generativeai",
+
+    # data download
+    "gdown",
+
+    # env
+    "python-dotenv",
+]
+
+[tool.uv]
+package = false
