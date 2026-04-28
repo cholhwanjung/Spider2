@@ -137,7 +137,7 @@ def test(
             allowed_ids = set(line.strip() for line in f if line.strip())
         task_configs = [task for task in task_configs if task["instance_id"] in allowed_ids]
     elif args.example_name != "":
-        task_configs = [task for task in task_configs if args.example_name in task["id"]]
+        task_configs = [task for task in task_configs if args.example_name in task["instance_id"]]
     else:
         if args.example_index != "all":
             if "-" in args.example_index:
