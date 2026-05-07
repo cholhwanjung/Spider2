@@ -30,6 +30,9 @@ methods/spider-agent-snow/examples/*
 
 methods/spider-agent-tc/results/*
 
+methods/apex-agent-snow/results/*
+methods/apex-agent-snow/.env
+
 spider2-snow/evaluation_suite/*.csv
 spider2-snow/evaluation_suite/log.txt
 spider2-snow/evaluation_suite/*/
