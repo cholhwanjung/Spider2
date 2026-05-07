@@ -1,0 +1,386 @@
+# Tip Library v1 — 49 tips from APEX-SQL paper Appendix C.
+# Universal tips (TIP009, TIP019, TIP035, TIP038) are always activated.
+# trigger_keywords are matched against LLM-extracted SQL keywords (uppercase).
+# Note: TIP043/044/045 appear twice in the paper appendix; C.3 retrieval rules
+# reference the Advanced Patterns versions. The Evidence Enforcement duplicates
+# are included with suffix 'E' to avoid collision.
+
+tips:
+
+  # ── Evidence Enforcement ─────────────────────────────────────────────────
+  - id: TIP001
+    universal: false
+    trigger_keywords: [EVIDENCE, EXACT, COLUMN, SPECIFIED]
+    text: |
+      [TIP001] Evidence-Specified Column Must Be Used Exactly
+      When evidence specifies a column name, explore using that exact column. Do NOT substitute with similar columns.
+
+  - id: TIP002
+    universal: false
+    trigger_keywords: [FORMULA, ARITHMETIC, CALCULATION, EXPRESSION, EVIDENCE]
+    text: |
+      [TIP002] Evidence-Specified Formula Must Be Implemented Exactly
+      When evidence provides a calculation formula, explore implementing it EXACTLY as specified. Do NOT use built-in functions that seem equivalent.
+
+  - id: TIP003
+    universal: false
+    trigger_keywords: [VALUE, MAPPING, STANDS_FOR, MEANS, EVIDENCE]
+    text: |
+      [TIP003] Evidence-Specified Value Must Be Used Exactly
+      When evidence provides value mappings, explore using the EXACT database value, not the English translation or interpretation.
+
+  - id: TIP004
+    universal: false
+    trigger_keywords: [REFERS_TO, AMBIGUOUS, CLARIFY, EVIDENCE]
+    text: |
+      [TIP004] Evidence Clarifies Ambiguous Terms
+      When evidence clarifies which column or table an ambiguous term refers to, explore following the evidence interpretation.
+
+  - id: TIP044E
+    universal: false
+    trigger_keywords: [FORMULA, PRESERVE, ARITHMETIC, EVIDENCE, EXPRESSION]
+    text: |
+      [TIP044E] Evidence Formula Preservation - No Rephrasing Allowed
+      When evidence provides a formula or calculation method, explore preserving it EXACTLY. Do NOT rephrase, simplify, or use 'equivalent' built-in functions.
+
+  - id: TIP045E
+    universal: false
+    trigger_keywords: [EVIDENCE, FILTER, WHERE, CONDITION, EXTRACT]
+    text: |
+      [TIP045E] WHERE Clause from Evidence - Extract Exact Conditions
+      When evidence specifies how to filter data (column names, values, or conditions), explore extracting and implementing these EXACTLY.
+
+  # ── String Matching ───────────────────────────────────────────────────────
+  - id: TIP005
+    universal: false
+    trigger_keywords: [EXACT, MATCH, EQUAL, VALUE, SPECIFIC, FILTER]
+    text: |
+      [TIP005] Use Exact Match (=) When Value Is Known
+      When question or evidence provides a specific value, explore using exact match (=). Only use LIKE for partial matching.
+
+  - id: TIP006
+    universal: false
+    trigger_keywords: [LIKE, CONTAIN, INCLUDE, PARTIAL, STARTS_WITH, ENDS_WITH]
+    text: |
+      [TIP006] Use LIKE Only for Partial Matching
+      Explore using LIKE only when question explicitly asks for partial matching (contains, starts with, ends with).
+
+  - id: TIP007
+    universal: false
+    trigger_keywords: [EXPLORE, EXACT, MATCH, PATTERN, VALUE]
+    text: |
+      [TIP007] After Exploration, Use Exact Values Not Patterns
+      After exploring to find possible values, use exact match (=) with the found value, not LIKE pattern.
+
+  - id: TIP025
+    universal: false
+    trigger_keywords: [NAME, TITLE, DESCRIPTION, STRING, MATCH]
+    text: |
+      [TIP025] Choose String Matching Strategy Based on Question Intent
+      Explore choosing between exact match (=), prefix match (LIKE 'X%'), suffix match (LIKE '%X'), or contains (LIKE '%X%') based on question.
+
+  # ── Output Columns ────────────────────────────────────────────────────────
+  - id: TIP008
+    universal: false
+    trigger_keywords: [ORDER, ORDER_BY, SORT, HIGHEST, LOWEST, TOP, BOTTOM, MAXIMUM, MINIMUM, BEST, WORST, MOST, LEAST]
+    text: |
+      [TIP008] Exclude ORDER BY Columns from SELECT Unless Requested
+      Explore excluding columns used only for sorting (ORDER BY) from SELECT unless explicitly requested in question.
+
+  - id: TIP009
+    universal: true
+    trigger_keywords: []
+    text: |
+      [TIP009] Return Columns in Exact Order Mentioned in Question
+      Explore returning output columns in the EXACT order they appear in the question. First mentioned → first in SELECT.
+
+  - id: TIP010
+    universal: false
+    trigger_keywords: [WHERE, FILTER, SELECT, OUTPUT, CONDITION]
+    text: |
+      [TIP010] Exclude Filter Columns from SELECT Unless Requested
+      Explore excluding columns used only for filtering (WHERE) from SELECT unless explicitly requested.
+
+  - id: TIP011
+    universal: false
+    trigger_keywords: [COUNT, HOW_MANY, TOTAL_COUNT, COUNTS]
+    text: |
+      [TIP011] For 'How Many' Questions, Return COUNT Only
+      When question asks 'how many', explore returning only COUNT, not individual records or other columns.
+
+  - id: TIP043S
+    universal: false
+    trigger_keywords: [SELECT, OUTPUT, COLUMNS, REQUESTED, RESULT]
+    text: |
+      [TIP043S] SELECT Clause Precision - Return ONLY Requested Columns
+      Explore ensuring the SELECT clause returns ONLY the columns explicitly requested in the question, in the exact order mentioned.
+
+  # ── Table Selection ───────────────────────────────────────────────────────
+  - id: TIP012
+    universal: false
+    trigger_keywords: [JOIN, TABLE, SINGLE, INFORMATION, MULTIPLE]
+    text: |
+      [TIP012] Check If Single Table Contains All Required Information
+      Before exploring JOIN, verify if all required information exists in a single table. Prefer exploring single-table solutions.
+
+  - id: TIP013
+    universal: false
+    trigger_keywords: [JOIN, MULTIPLE, TABLES, ENTITIES, INNER]
+    text: |
+      [TIP013] JOIN Only When Information Spans Multiple Tables
+      Explore using JOIN only when question explicitly needs information from multiple entities that exist in different tables.
+
+  - id: TIP014
+    universal: false
+    trigger_keywords: [SUBQUERY, NESTED, COMPLEXITY, SIMPLE, UNNECESSARY]
+    text: |
+      [TIP014] Avoid Over-Engineering with Unnecessary Complexity
+      Explore avoiding JOINs, subqueries, or conditions that aren't needed. Use the simplest solution that answers the question.
+
+  # ── Column Interpretation ─────────────────────────────────────────────────
+  - id: TIP015
+    universal: false
+    trigger_keywords: [PARENTHESES, COLUMN_NAME, SPECIAL, BRACKET]
+    text: |
+      [TIP015] Parenthetical Text in Column Names Is NOT a Filter Condition
+      When exploring, note that text in parentheses within column names (e.g., '(K-12)', '(Ages 5-17)') is part of the column name, NOT a filter condition.
+
+  - id: TIP016
+    universal: false
+    trigger_keywords: [PARENTHESES, CONTEXT, COLUMN_NAME, BRACKET]
+    text: |
+      [TIP016] Distinguish Column Name Context from Filter Conditions
+      When exploring, note that parenthetical text in column names provides context about the data, not additional filter conditions to apply.
+
+  # ── Schema Grounding ──────────────────────────────────────────────────────
+  - id: TIP017
+    universal: false
+    trigger_keywords: [COLUMN, MATCH, NAME, SCHEMA, IDENTIFY]
+    text: |
+      [TIP017] Use Direct Name Matching for Column Identification
+      When exploring, if logical plan mentions a concept, look for columns with similar names first (case-insensitive, with variations).
+
+  - id: TIP018
+    universal: false
+    trigger_keywords: [SEMANTIC, MATCHING, CONCEPT, RELATED, SCHEMA]
+    text: |
+      [TIP018] Use Semantic Matching When Direct Names Don't Match
+      When exploring, if direct name matching fails, think about what the concept means and look for semantically related columns.
+
+  - id: TIP019
+    universal: true
+    trigger_keywords: []
+    text: |
+      [TIP019] Always Verify Column Existence Before Using
+      When exploring, never assume a column exists. Always verify through exploration before using.
+
+  # ── Join Strategy ─────────────────────────────────────────────────────────
+  - id: TIP020
+    universal: false
+    trigger_keywords: [JOIN, FOREIGN_KEY, RELATIONSHIP, ID, KEY]
+    text: |
+      [TIP020] Identify Join Keys from Schema Relationships
+      When exploring joins, look for foreign key relationships in schema. Common patterns: ID columns, Code columns, Name columns.
+
+  - id: TIP021
+    universal: false
+    trigger_keywords: [JOIN, VERIFY, NULL, MATCHING, VALUES]
+    text: |
+      [TIP021] Verify Join Keys Have Matching Values
+      When exploring joins, verify that join keys have matching values in both tables and check for NULLs.
+
+  - id: TIP022
+    universal: false
+    trigger_keywords: [JOIN, INNER, LEFT, OUTER, TYPE, RECORDS]
+    text: |
+      [TIP022] Choose Appropriate Join Type
+      When exploring joins, select join type based on whether you need all records from one/both tables or only matching records.
+
+  - id: TIP042
+    universal: false
+    trigger_keywords: [JOIN, ALIAS, TABLE_ALIAS, PREFIX, AMBIGUOUS]
+    text: |
+      [TIP042] Prefix Columns with Table Alias When Joining
+      When exploring joins, prefix all columns with table alias to avoid ambiguous column errors.
+
+  # ── Filter Implementation ─────────────────────────────────────────────────
+  - id: TIP023
+    universal: false
+    trigger_keywords: [FILTER, WHERE, EXACT, VALUE, CONDITION, SPECIFIED]
+    text: |
+      [TIP023] Use Exact Value Filters When Value Is Specified
+      When question explicitly mentions a value, explore using exact match (=) for filtering.
+
+  - id: TIP024
+    universal: false
+    trigger_keywords: [BETWEEN, GREATER, LESS, AT_LEAST, AT_MOST, ABOVE, BELOW, OVER, UNDER, EXCEED, COMPARISON, RANGE]
+    text: |
+      [TIP024] Use Correct Numeric Comparison Operators
+      When exploring filters, translate question's numeric comparisons to correct operators. Pay attention to inclusive vs exclusive. BETWEEN is inclusive on both ends.
+
+  # ── Aggregation ───────────────────────────────────────────────────────────
+  - id: TIP026
+    universal: false
+    trigger_keywords: [AGGREGATION, COUNT, SUM, AVG, MAX, MIN, AGGREGATE, TOTAL]
+    text: |
+      [TIP026] Choose Correct Aggregation Function
+      When exploring aggregations, select appropriate function based on what question asks: COUNT, SUM, AVG, MAX, MIN.
+
+  - id: TIP027
+    universal: false
+    trigger_keywords: [DIVISION, RATIO, PERCENTAGE, CAST, ZERO, FLOAT, DIVIDE]
+    text: |
+      [TIP027] Protect Division Operations Against Zero and Use CAST
+      When exploring calculations with ratios or percentages, protect against division by zero and ensure float division with CAST.
+
+  - id: TIP028
+    universal: false
+    trigger_keywords: [GROUP_BY, GROUP, AGGREGATION, CATEGORY, PER, EACH, BY]
+    text: |
+      [TIP028] Use GROUP BY When Aggregating Per Category
+      When exploring aggregations and question asks 'per category', 'by group', 'for each', use GROUP BY with the category column.
+
+  - id: TIP029
+    universal: false
+    trigger_keywords: [HAVING, AGGREGATION, FILTER_GROUPS, GROUP_BY, AFTER]
+    text: |
+      [TIP029] Use HAVING to Filter After Aggregation
+      When exploring aggregations, use HAVING clause to filter groups after aggregation. Use WHERE to filter rows before aggregation.
+
+  - id: TIP046
+    universal: false
+    trigger_keywords: [ROUND, PRECISION, CALCULATION, RATIO, PERCENTAGE, AVERAGE, ROUNDING]
+    text: |
+      [TIP046] Precision Preservation - No Arbitrary Rounding
+      When exploring calculations, do NOT apply ROUND() unless the question explicitly specifies precision requirements.
+
+  - id: TIP047
+    universal: false
+    trigger_keywords: [RATIO, PERCENTAGE, COUNT, OCCURRENCES, PROPORTION, RATE]
+    text: |
+      [TIP047] Ratio Calculation - Count All Occurrences
+      When exploring ratio or percentage calculations, count ALL occurrences (including duplicates) unless the question explicitly asks for DISTINCT counts.
+
+  - id: TIP048
+    universal: false
+    trigger_keywords: [PERCENTAGE, CAST, REAL, MULTIPLY, DIVISION, PERCENT, PROPORTION]
+    text: |
+      [TIP048] Percentage Calculation - CAST to REAL and Multiply by 100
+      When exploring percentage calculations, always CAST the numerator to REAL before division, then multiply by 100.
+
+  - id: TIP049
+    universal: false
+    trigger_keywords: [DISTINCT, COUNT, LIST, HOW_MANY, UNIQUE, DUPLICATES]
+    text: |
+      [TIP049] DISTINCT Usage - List vs Count
+      When exploring, use DISTINCT when listing entities (names, IDs, items) to avoid duplicates. Do NOT use DISTINCT when counting occurrences for statistical purposes unless explicitly asked for unique counts.
+
+  # ── Sorting and Limiting ──────────────────────────────────────────────────
+  - id: TIP030
+    universal: false
+    trigger_keywords: [ORDER_BY, ORDER, SORT, ASC, DESC, HIGHEST, LOWEST, FIRST, LAST, ASCENDING, DESCENDING]
+    text: |
+      [TIP030] Implement ORDER BY Based on Question Keywords
+      When exploring sorting, translate question's keywords to correct ORDER BY direction: ASC for lowest/first, DESC for highest/last.
+
+  - id: TIP031
+    universal: false
+    trigger_keywords: [LIMIT, TOP, FIRST_N, EXTREME, ORDER_BY, TOP_N, SINGLE]
+    text: |
+      [TIP031] Use LIMIT for Top N or Single Extreme Value
+      When exploring and question asks for 'top N', 'first N', or single extreme value, use LIMIT with ORDER BY.
+
+  - id: TIP032
+    universal: false
+    trigger_keywords: [NULL, ORDER_BY, EXTREME, MAXIMUM, MINIMUM, IS_NOT_NULL, FILTER_NULL]
+    text: |
+      [TIP032] Filter Out NULLs When Finding Extreme Values
+      When exploring extreme values with ORDER BY, add WHERE column IS NOT NULL to avoid NULL results.
+
+  # ── Multi-Step Logic ──────────────────────────────────────────────────────
+  - id: TIP033
+    universal: false
+    trigger_keywords: [SUBQUERY, DEPENDENT, STEP, NESTED, CTE, WITH]
+    text: |
+      [TIP033] Use Subquery for Dependent Steps
+      When exploring and logical plan has dependent steps (step 2 needs result from step 1), explore using subquery or CTE.
+
+  - id: TIP034
+    universal: false
+    trigger_keywords: [CTE, WITH, COMPLEX, MULTI_STEP, SUBQUERY, MULTIPLE_STEPS]
+    text: |
+      [TIP034] Use CTE for Complex Multi-Step Logic
+      When exploring complex queries with multiple dependent steps, explore using CTE (WITH clause) for clarity.
+
+  # ── SQL Syntax ────────────────────────────────────────────────────────────
+  - id: TIP035
+    universal: true
+    trigger_keywords: []
+    text: |
+      [TIP035] Use Double Quotes for Identifiers with Spaces or Special Characters
+      When exploring, note that column/table names with spaces, special characters, or reserved words must be quoted with double quotes.
+
+  - id: TIP036
+    universal: false
+    trigger_keywords: [ALIAS, CALCULATE, RATIO, PERCENTAGE, EXPRESSION, AS, CALCULATED]
+    text: |
+      [TIP036] Use Aliases for Calculated Columns
+      When exploring calculations, give meaningful aliases to calculated columns, aggregations, and complex expressions using AS.
+
+  - id: TIP037
+    universal: false
+    trigger_keywords: [ALIAS, WHERE, SUBQUERY, EXPRESSION, COLUMN_ALIAS]
+    text: |
+      [TIP037] Cannot Use Column Alias in WHERE Clause of Same Level
+      When exploring, note that column aliases defined in SELECT cannot be used in WHERE clause of the same query level. Use subquery or repeat expression.
+
+  # ── Common Pitfalls ───────────────────────────────────────────────────────
+  - id: TIP038
+    universal: true
+    trigger_keywords: []
+    text: |
+      [TIP038] Never Hard-Code Values Discovered in Exploration
+      When exploring, do NOT hard-code values you discovered unless they are explicitly mentioned in the question.
+
+  - id: TIP039
+    universal: false
+    trigger_keywords: [NULL, MISSING, EMPTY, IS_NULL, IS_NOT_NULL, NULLABLE]
+    text: |
+      [TIP039] Handle NULL Values Appropriately
+      When exploring, be aware of NULL values in aggregations, comparisons, and joins. Filter or handle them explicitly.
+
+  - id: TIP040
+    universal: false
+    trigger_keywords: [DIVISION, INTEGER, CAST, FLOAT, REAL, CALCULATION, DIVIDE]
+    text: |
+      [TIP040] Avoid Integer Division - Use CAST for Float Results
+      When exploring calculations, note that dividing two integers gives integer result. Use CAST(x AS REAL) to get float result.
+
+  - id: TIP041
+    universal: false
+    trigger_keywords: [ENTITY_TYPE, METRIC, TYPE, SPECIFIC, CERTAIN, PARTICULAR, FILTER_TYPE]
+    text: |
+      [TIP041] Apply Entity Isolation for Mixed-Data Tables
+      When exploring tables with mixed entity types (e.g., different metrics in same table), filter by entity type before aggregating.
+
+  # ── Advanced Patterns ─────────────────────────────────────────────────────
+  - id: TIP043
+    universal: false
+    trigger_keywords: [CASE, WHEN, CONDITIONAL, AGGREGATION, DIFFERENT, CASE_WHEN]
+    text: |
+      [TIP043] Use Conditional Aggregation with CASE
+      When exploring aggregations of different subsets in one query, use CASE inside aggregate functions.
+
+  - id: TIP044
+    universal: false
+    trigger_keywords: [RANK, RANKING, ROW_NUMBER, WINDOW, PARTITION, OVER, DENSE_RANK]
+    text: |
+      [TIP044] Use Window Functions for Ranking
+      When exploring ranking, row numbering, or running calculations, use window functions (RANK, ROW_NUMBER, etc.).
+
+  - id: TIP045
+    universal: false
+    trigger_keywords: [ROW_NUMBER, PARTITION, TOP_N, PER_GROUP, RANK, WINDOW, OVER]
+    text: |
+      [TIP045] Find Top N Per Group with Window Functions
+      When exploring top N records per category, use ROW_NUMBER() with PARTITION BY, then filter.

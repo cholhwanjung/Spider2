@@ -33,6 +33,10 @@ methods/spider-agent-tc/results/*
 methods/apex-agent-snow/results/*
 methods/apex-agent-snow/.env
 
+methods/echo-sql-snow/results/*
+methods/echo-sql-snow/.env
+methods/echo-sql-snow/snowflake_credential.json
+
 spider2-snow/evaluation_suite/*.csv
 spider2-snow/evaluation_suite/log.txt
 spider2-snow/evaluation_suite/*/
@@ -152,3 +156,8 @@ spider2-lite/resource/databases/spider2-localdb
 credentials/
 **/credentials/
 
+APEX-SQL PLAN.md
+CLAUDE.md
+EXPERIMENTS.md
+Instruction Template.md
+Tip Library Details.md

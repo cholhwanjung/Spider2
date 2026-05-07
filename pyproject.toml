@@ -63,6 +63,7 @@ dependencies = [
     # apex-agent-snow
     "pyyaml",
     "httpx<0.28",
+    "sqlglot>=23",
 ]
 
 [tool.uv]
